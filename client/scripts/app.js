@@ -30,7 +30,7 @@ var App = {
       Messages.update(data.results, MessagesView.render);
       
       callback();
-    });
+    }); 
   },
 
   startSpinner: function() {

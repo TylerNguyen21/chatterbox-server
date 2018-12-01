@@ -27,14 +27,16 @@ var server = http.createServer(function(request, response) {
     
     headers['Content-Type'] = 'application/json';
    
-    response.writeHead(statusCode, headers);
+    
     var urlParts = url.parse(request.url);
     var route = routes[urlParts.pathname];
 
-    if (route) {
-        route(request, response);
+    if (route && urlParts.pathname === '/classes/messages') {
+        response.writeHead(statusCode, headers);
+        route(request, response);   
     } else {
-        utilities.sendResponse(response, 'Not Found', 404);
+        response.writeHead(404, headers);
+            
     }
     response.end('Hello, World!');
   });

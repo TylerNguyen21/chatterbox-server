@@ -14,9 +14,23 @@ this file and include it in basic-server.js so that it actually works.
 var utilities = require('./utilities.js');
 var fs = require('fs');
 var body = [];
+var url = require('url');
+
+var defaultCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10,
+  'Content-Type': 'application/json'
+};
+
 var actions = {
   'GET': function(request, response) {
+    if(request.url === '/classes/messages') {
     utilities.sendResponse(response, {results: body});
+    } else {
+    utilities.sendResponse(response, 'Not Found', 404);
+    }
   },
   'POST': function(request, response) {
 
@@ -26,14 +40,18 @@ var actions = {
     request.on('end', function() {
       //console.log("Body: " + body);
     });
-    response.writeHead(201, {'Content-type': 'application/json'});
+    response.writeHead(201, {'Content-type': 'text/plain'});
     response.end('post received');
+  },
+  'OPTIONS': function(request, response) {
+    response.writeHead(200, defaultCorsHeaders);
+    response.end();
   }
 }
 
 module.exports.requestHandler = function(request, response) {
   var action = actions[request.method];
-  if (action) {
+  if (action) { 
     action(request, response);
   } else {
     utilities.sendResponse(response, 'Not Found', 404);
